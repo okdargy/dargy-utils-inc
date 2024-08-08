@@ -1,0 +1,7 @@
+{
+    "colors": {
+        "primary": "#f376ac",
+        "error": "#ef4444"
+    },
+    "tmpDir": "./tmp"
+}

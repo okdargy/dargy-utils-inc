@@ -1,0 +1,26 @@
+{
+  "name": "dargy-utils-inc-seyfert",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node ./dist/index.js",
+    "watch": "tsc -w",
+    "dev": "cross-env NODE_ENV=development nodemon"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.16.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "node-shazam": "^1.2.7",
+    "seyfert": "^1.5.0"
+  }
+}
