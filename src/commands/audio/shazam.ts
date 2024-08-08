@@ -13,7 +13,7 @@ import { ColorResolvable, InteractionCreateBodyRequest, InteractionMessageUpdate
 
 import { Shazam } from 'node-shazam';
 import config from '../../../config.json';
-import fs from 'fs';
+import fs from 'fs/promises';
 
 @Declare({
     name: 'Use Shazam',
@@ -41,12 +41,12 @@ export default class ShazamCommand extends ContextMenuCommand {
         const buffer = Buffer.from(arrayBuffer);
 
         const fileName = `${config.tmpDir}/${attachment.filename}`;
-        fs.writeFileSync(fileName, buffer);
+        await fs.writeFile(fileName, buffer);
 
         const shazam = new Shazam();
         const recognise = await shazam.recognise(fileName);
 
-        fs.unlinkSync(fileName); // Clean up
+        await fs.unlink(fileName); // Clean up
 
         if (!recognise) {
             throw new Error('No results found');
@@ -76,6 +76,7 @@ export default class ShazamCommand extends ContextMenuCommand {
                 .setColor(primaryColor as ColorResolvable)
                 .setTitle(`${recognise.track.subtitle} - ${recognise.track.title}`)
                 .addFields(filteredFields)
+                .setFooter({text: `Requested by ${ctx.interaction.user.tag} (@${ctx.interaction.user.username})`, iconUrl: ctx.interaction.user.avatarURL()})
 
             const coverAttachment = new AttachmentBuilder()
                 .setName('cover.jpg')
