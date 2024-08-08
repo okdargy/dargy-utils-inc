@@ -1,7 +1,22 @@
 {
     "colors": {
         "primary": "#f376ac",
-        "error": "#ef4444"
+        "error": "#ef4444",
+        "shazam": "#0f81fb"
+    },
+    "emojis": {
+        "links": {
+            "appleMusic": "<:apple_music:1271174177327677623>",
+            "spotify": "<:spotify:1271174166082752533>",
+            "youtubeMusic": "<:youtube_music:1271173827581448222>",
+            "youtube": "<:youtube:1271173794681065563>",
+            "amazonMusic": "<:amazon_music:1271173905981116538>",
+            "soundcloud": "<:soundcloud:1271173885894856726>",
+            "deezer": "<:deezer:1271173854022336594>",
+            "pandora": "<:pandora:1271173841531703419>",
+            "tidal": "<:tidal:1271173918249455717>",
+            "napster": "<:napster:1271173926839652403>"
+        }
     },
     "tmpDir": "./tmp"
 }
