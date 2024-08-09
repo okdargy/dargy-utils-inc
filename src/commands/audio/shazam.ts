@@ -56,7 +56,7 @@ export default class ShazamCommand extends ContextMenuCommand {
             let primaryColor = config.colors.shazam;
 
             if (recognise.track.images && recognise.track.images.joecolor) {
-                const match = recognise.track.images.joecolor.match(/p:([0-9a-fA-F]{6})/);
+                const match = recognise.track.images.joecolor.match(/b:([0-9a-fA-F]{6})/);
                 if (match) {
                     primaryColor = `#${match[1]}`;
                 }
@@ -76,7 +76,7 @@ export default class ShazamCommand extends ContextMenuCommand {
                 .setColor(primaryColor as ColorResolvable)
                 .setTitle(`${recognise.track.subtitle} - ${recognise.track.title}`)
                 .addFields(filteredFields)
-                .setFooter({text: `Requested by ${ctx.interaction.user.tag} (@${ctx.interaction.user.username})`, iconUrl: ctx.interaction.user.avatarURL()})
+                .setFooter({text: `Requested by ${ctx.interaction.user.tag}`, iconUrl: ctx.interaction.user.avatarURL()})
 
             const coverAttachment = new AttachmentBuilder()
                 .setName('cover.jpg')
@@ -126,7 +126,6 @@ export default class ShazamCommand extends ContextMenuCommand {
                 payload = { ...payload, components: actionRows };
             }
 
-            console.log(payload)
             return ctx.editOrReply(payload);
         } else {
             const embed = new Embed()
@@ -136,7 +135,7 @@ export default class ShazamCommand extends ContextMenuCommand {
                     { name: 'Album', value: recognise.album || "Unknown", inline: true },
                     { name: 'Year', value: recognise.year || "Unknown", inline: true }
                 ])
-                .setFooter({ text: `Shazam`, iconUrl: 'https://files.catbox.moe/kssbds.png' });
+                .setFooter({text: `Requested by ${ctx.interaction.user.tag}`, iconUrl: ctx.interaction.user.avatarURL()})
 
             return ctx.editOrReply({
                 embeds: [embed]

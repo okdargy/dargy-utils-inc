@@ -14,16 +14,16 @@ import fs from 'fs/promises';
 import ffmpeg from 'fluent-ffmpeg';
 
 const instructions = [
-    '-lavfi showspectrumpic=s=1024x512:legend=disabled:mode=separate,pad=1044:532:10:10',
+    '-lavfi showwavespic=s=1024x512:split_channels=1:colors=white|white',
     '-frames:v 1'
 ]
 
 @Declare({
-    name: 'Generate Spectogram',
+    name: 'Generate Waveform',
     type: ApplicationCommandType.Message,
     integrationTypes: ['UserInstall', 'GuildInstall'],
 })
-export default class SpectogramCommand extends ContextMenuCommand {
+export default class WaveformCommand extends ContextMenuCommand {
     async run(ctx: MenuCommandContext<MessageCommandInteraction>) {
         ctx.deferReply();
         
@@ -54,13 +54,13 @@ export default class SpectogramCommand extends ContextMenuCommand {
             let embed = new Embed()
                 .setColor(config.colors.primary as ColorResolvable) 
                 .setTitle('Successfully generated!')
-                .setDescription(`Spectogram generated for \`${attachment.filename}\``)
+                .setDescription(`Waveform generated for \`${attachment.filename}\``)
                 .setFooter({text: `Requested by ${ctx.interaction.user.tag}`, iconUrl: ctx.interaction.user.avatarURL()})
         
             // Renamed the variable to avoid conflict
             let outputAttachment = new AttachmentBuilder()
                 .setFile('path', output)
-                .setName(`spectogram-${attachment.filename}-${attachment.id}.png`)
+                .setName(`waveform-${attachment.filename}-${attachment.id}.png`)
 
             await ctx.editOrReply({
                 embeds: [embed],
@@ -77,7 +77,7 @@ export default class SpectogramCommand extends ContextMenuCommand {
             let embed = new Embed()
                 .setColor(config.colors.error as ColorResolvable)
                 .setTitle('Failed to generate')
-                .setDescription(`An error occurred while generating the spectogram.\n\`\`\`${err}\`\`\``)
+                .setDescription(`An error occurred while generating the Waveform.\n\`\`\`${err}\`\`\``)
         
             console.error(err);
             fs.unlink(fileName);
