@@ -8,8 +8,9 @@ import {
     MenuCommandContext,
     MessageCommandInteraction,
 } from 'seyfert';
-import { ApplicationCommandType, ButtonStyle } from 'seyfert/lib/types';
+import { ApplicationCommandType, ButtonStyle, MessageFlags } from 'seyfert/lib/types';
 import { ColorResolvable, InteractionCreateBodyRequest, InteractionMessageUpdateBodyRequest } from 'seyfert/lib/common';
+import selectAttachment from '../../reuseables/selectAttachment';
 
 import { Shazam } from 'node-shazam';
 import config from '../../../config.json';
@@ -23,16 +24,15 @@ import fs from 'fs/promises';
 
 export default class ShazamCommand extends ContextMenuCommand {
     async run(ctx: MenuCommandContext<MessageCommandInteraction>) {
-        ctx.deferReply();
+        ctx.deferReply(true);
 
-        const message = Object.values(ctx.interaction.data.resolved.messages)[0];
-        const attachments = message.attachments;
-
-        if (!attachments) {
+        const attachment = await selectAttachment(ctx);
+        
+        if(!attachment) {
             throw new Error('No attachments found');
+        } else if (attachment === "idle") {
+            return;
         }
-
-        const attachment = attachments[0];
 
         const res = await fetch(attachment.url);
         if (!res.ok) throw new Error('Failed to fetch the attachment.');
@@ -147,12 +147,13 @@ export default class ShazamCommand extends ContextMenuCommand {
         ctx.client.logger.error(error);
 
         const errorEmbed = new Embed()
+            .setColor(config.colors.error as ColorResolvable)
             .setTitle('Error')
-            .setDescription(error.message)
-            .setColor(config.colors.error as ColorResolvable);
+            .setDescription(error.message);
 
         return ctx.editOrReply({
-            embeds: [errorEmbed]
+            embeds: [errorEmbed],
+            flags: MessageFlags.Ephemeral
         })
     }
 }

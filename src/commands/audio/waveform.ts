@@ -8,6 +8,7 @@ import {
 } from 'seyfert';
 import { ApplicationCommandType } from 'seyfert/lib/types';
 import { ColorResolvable } from 'seyfert/lib/common';
+import selectAttachment from '../../reuseables/selectAttachment';
 
 import config from '../../../config.json';
 import fs from 'fs/promises';
@@ -27,14 +28,13 @@ export default class WaveformCommand extends ContextMenuCommand {
     async run(ctx: MenuCommandContext<MessageCommandInteraction>) {
         ctx.deferReply();
         
-        const message = Object.values(ctx.interaction.data.resolved.messages)[0];
-        const attachments = message.attachments;
-
-        if (!attachments) {
+        const attachment = await selectAttachment(ctx);
+        
+        if(!attachment) {
             throw new Error('No attachments found');
+        } else if (attachment === "idle") {
+            return;
         }
-
-        const attachment = attachments[0];
 
         const res = await fetch(attachment.url);
         if (!res.ok) throw new Error('Failed to fetch the attachment.');
@@ -77,7 +77,7 @@ export default class WaveformCommand extends ContextMenuCommand {
             let embed = new Embed()
                 .setColor(config.colors.error as ColorResolvable)
                 .setTitle('Failed to generate')
-                .setDescription(`An error occurred while generating the Waveform.\n\`\`\`${err}\`\`\``)
+                .setDescription(`An error occurred while generating the waveform.\n\`\`\`${err}\`\`\``)
         
             console.error(err);
             fs.unlink(fileName);

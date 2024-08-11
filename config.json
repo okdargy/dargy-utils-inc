@@ -2,6 +2,7 @@
     "colors": {
         "primary": "#f376ac",
         "error": "#ef4444",
+        "processing": "#f5f591",
         "shazam": "#0f81fb"
     },
     "emojis": {
@@ -18,5 +19,6 @@
             "napster": "<:napster:1271173926839652403>"
         }
     },
+    "timeout": 30000,
     "tmpDir": "./tmp"
 }

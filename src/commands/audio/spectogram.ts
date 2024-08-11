@@ -6,15 +6,16 @@ import {
     MenuCommandContext,
     MessageCommandInteraction
 } from 'seyfert';
-import { ApplicationCommandType } from 'seyfert/lib/types';
+import { ApplicationCommandType, MessageFlags } from 'seyfert/lib/types';
 import { ColorResolvable } from 'seyfert/lib/common';
+import selectAttachment from '../../reuseables/selectAttachment';
 
 import config from '../../../config.json';
 import fs from 'fs/promises';
 import ffmpeg from 'fluent-ffmpeg';
 
 const instructions = [
-    '-lavfi showspectrumpic=s=1024x512:legend=disabled:mode=separate,pad=1044:532:10:10',
+    '-lavfi showspectrumpic=s=1024x512:legend=disabled:mode=separate',
     '-frames:v 1'
 ]
 
@@ -27,14 +28,13 @@ export default class SpectogramCommand extends ContextMenuCommand {
     async run(ctx: MenuCommandContext<MessageCommandInteraction>) {
         ctx.deferReply();
         
-        const message = Object.values(ctx.interaction.data.resolved.messages)[0];
-        const attachments = message.attachments;
-
-        if (!attachments) {
+        const attachment = await selectAttachment(ctx);
+        
+        if(!attachment) {
             throw new Error('No attachments found');
+        } else if (attachment === "idle") {
+            return;
         }
-
-        const attachment = attachments[0];
 
         const res = await fetch(attachment.url);
         if (!res.ok) throw new Error('Failed to fetch the attachment.');
@@ -74,7 +74,7 @@ export default class SpectogramCommand extends ContextMenuCommand {
             return;
         })
         .on('error', async (err) => {
-            let embed = new Embed()
+            const errorEmbed = new Embed()
                 .setColor(config.colors.error as ColorResolvable)
                 .setTitle('Failed to generate')
                 .setDescription(`An error occurred while generating the spectogram.\n\`\`\`${err}\`\`\``)
@@ -83,7 +83,8 @@ export default class SpectogramCommand extends ContextMenuCommand {
             fs.unlink(fileName);
 
             return ctx.editOrReply({
-                embeds: [embed]
+                embeds: [errorEmbed],
+                flags: MessageFlags.Ephemeral
             })
         })
         .run();
@@ -98,7 +99,8 @@ export default class SpectogramCommand extends ContextMenuCommand {
             .setColor(config.colors.error as ColorResolvable);
 
         return ctx.editOrReply({
-            embeds: [errorEmbed]
+            embeds: [errorEmbed],
+            flags: MessageFlags.Ephemeral
         })
     }
 }

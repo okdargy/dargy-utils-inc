@@ -2,8 +2,6 @@ import {
     Command,
     Declare,
     Embed,
-    Options,
-    createBooleanOption,
     type CommandContext
 } from 'seyfert';
 import { MessageFlags } from 'seyfert/lib/types';
@@ -12,20 +10,12 @@ import { ColorResolvable } from 'seyfert/lib/common';
 import config from '../../../config.json';
 import os from 'os';
 
-const options = {
-    hide: createBooleanOption({
-        description: "Hide command output",
-    }),
-}
-
 @Declare({
     name: 'ping',
     description: 'Show the bot latency and other general stats to help determine the bot\'s health',
 })
-@Options(options)
 export default class PingCommand extends Command {
-    async run(ctx: CommandContext<typeof options>) {
-        const flags = ctx.options.hide ? MessageFlags.Ephemeral : undefined;
+    async run(ctx: CommandContext) {
         const ping = ctx.client.gateway.latency;
 
         const embed = new Embed()
@@ -57,7 +47,7 @@ export default class PingCommand extends Command {
 
         await ctx.write({
             embeds: [embed],
-            flags,
+            flags: MessageFlags.Ephemeral
         });
     }
 
